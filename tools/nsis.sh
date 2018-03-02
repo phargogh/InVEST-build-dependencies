@@ -7,7 +7,6 @@ if [ -d $DESTDIR ]
 then
     rm -r $DESTDIR
 fi
-
 mkdir -p $DESTDIR
 
 cp $DROPBOX/NSIS/* .
