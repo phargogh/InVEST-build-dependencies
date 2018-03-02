@@ -17,9 +17,11 @@ wget https://github.com/git-for-windows/git/releases/download/v2.16.2.windows.1/
 wget https://www.mercurial-scm.org/release/windows/Mercurial-4.5-x64.exe
 wget https://repo.continuum.io/miniconda/Miniconda2-4.4.10-Windows-x86.exe
 wget https://repo.continuum.io/miniconda/Miniconda2-4.4.10-Windows-x86_64.exe
-
-# still need make for windows, NSIS and plugins.
-
+wget http://nsis.sourceforge.net/mediawiki/images/1/1c/Nsisunz.zip
+wget http://nsis.sourceforge.net/mediawiki/images/c/c9/Inetc.zip
+wget http://nsis.sourceforge.net/mediawiki/images/1/18/NsProcess.zip
+wget https://astuteinternet.dl.sourceforge.net/project/nsis/NSIS%202/2.51/nsis-2.51-setup.exe
+wget https://astuteinternet.dl.sourceforge.net/project/gnuwin32/make/3.81/make-3.81.exe
 
 
 
