@@ -11,6 +11,16 @@
 # MSI self-contained installers:
 #   > start /wait Setup-Subversion-1.8.17.msi /quiet
 
+TOOLSDIR=tools
+
+if [ -d $TOOLSDIR ]
+then
+    rm -r $TOOLSDIR
+fi
+mkdir $TOOLSDIR
+
+alias wget="wget -P $TOOLSDIR"
+
 wget http://www.7-zip.org/a/7z1801-x64.msi
 wget https://svwh.dl.sourceforge.net/project/win32svn/1.8.17/Setup-Subversion-1.8.17.msi
 wget https://github.com/git-for-windows/git/releases/download/v2.16.2.windows.1/PortableGit-2.16.2-64-bit.7z.exe
