@@ -1,4 +1,5 @@
 # Start the current script in a new shell, authenticated as admin.
+# Needed because some installers REQUIRE that we're running as admin.
 # From https://stackoverflow.com/a/11440595/299084
 If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
 {
@@ -6,7 +7,6 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Start-Process powershell -Verb runAs -ArgumentList $arguments
     Break
 }
-
 
 # define a custom unzip function for when we need it later.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
@@ -54,11 +54,13 @@ function InstallNSISPluginFromZipfile
 }
 
 # work out of C:\natcap-setup
+echo "Setting up working directory C:\natcap-setup"
 New-Item -ItemType directory -Path C:\natcap-setup
 Set-Location -Path C:\natcap-setup
 
 
 # Install known dependencies
+echo "Installing dependencies from installers"
 InstallMSI 7z1801-x64.msi
 InstallMSI Setup-Subversion-1.8.17.msi
 InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
@@ -66,7 +68,12 @@ InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
 InstallNSIS nsis-2.51-setup.exe C:\NSIS
 InstallInnoSetup make-3.81.exe
 InstallInnoSetup Mercurial-4.5-x64.exe
-InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
+InstallInnoSetup Git-2.16.2-64-bit.exe
+
+# Install python2.7 to both conda installations
+echo "Installing python to conda environments"
+C:\Miniconda2_x32\Scripts\conda install -y python=2.7
+C:\Miniconda2_x64\Scripts\conda install -y python=2.7
 
 # install NSIS plugins from zipfiles
 echo "Installing NSIS plugins"
