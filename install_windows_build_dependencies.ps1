@@ -95,3 +95,7 @@ $env:Path += ";C:\Program Files (x86)\Git\bin"
 echo "Installing latest Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
+
+# Prepare the system for imaging
+echo "Preparing the system for imaging"
+GCESysprep

@@ -30,39 +30,60 @@ gcloud compute instances create $tempmachinename \
     --image=windows-server-2008-r2-dc-v20180213 \
     --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
 
-
+# let's assume that we can put GCESysprep in the sysprep script
 while true
 do
     gcloud compute --project=natcap-servers \
-        instances get-serial-port-output \
-        $tempmachinename --zone=us-west1-a | tail -n 20 | grep "Activation successful"
+        instances describe $tempmachinename | grep status | grep TERMINATED
     if [ $? -eq 0 ]
     then
-        # computer setup is complete, wait until the machine is completely shut down
-        # before creating the new machine image.
-        while true
-        do
-            gcloud compute --project=natcap-servers \
-                instances describe $tempmachinename | grep status | grep TERMINATED
-            if [ $? -eq 0 ]
-            then
-                gcloud compute images create $templatename \
-                    --source-disk=$tempmachinename \
-                    --source-disk-zone=$zone \
-                    --family=windows-2008-r2
+        gcloud compute images create $templatename \
+            --source-disk=$tempmachinename \
+            --source-disk-zone=$zone \
+            --family=windows-2008-r2
 
-                # now, delete the temporary VM
-                gcloud compute instances delete $tempmachinename --zone=$zone
-                break
-            else
-                sleep 2
-            fi
-        done
+        # now, delete the temporary VM
+        gcloud compute instances delete $tempmachinename --zone=$zone
         break
     else
-        # computer setup is still in progress 
         sleep 2
     fi
 done
+
+
+
+#while true
+#do
+#    gcloud compute --project=natcap-servers \
+#        instances get-serial-port-output \
+#        $tempmachinename --zone=us-west1-a | tail -n 20 | grep "Activation successful"
+#    if [ $? -eq 0 ]
+#    then
+#        # computer setup is complete, wait until the machine is completely shut down
+#        # before creating the new machine image.
+#        while true
+#        do
+#            gcloud compute --project=natcap-servers \
+#                instances describe $tempmachinename | grep status | grep TERMINATED
+#            if [ $? -eq 0 ]
+#            then
+#                gcloud compute images create $templatename \
+#                    --source-disk=$tempmachinename \
+#                    --source-disk-zone=$zone \
+#                    --family=windows-2008-r2
+#
+#                # now, delete the temporary VM
+#                gcloud compute instances delete $tempmachinename --zone=$zone
+#                break
+#            else
+#                sleep 2
+#            fi
+#        done
+#        break
+#    else
+#        # computer setup is still in progress 
+#        sleep 2
+#    fi
+#done
 
 
