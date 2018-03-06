@@ -37,7 +37,7 @@ while true
 do
     gcloud compute --project=natcap-servers \
         instances get-serial-port-output \
-        $tempmachinename --zone=us-west1-a | tail -n 20 | egrep -i 'activation successful'
+        $tempmachinename --zone=us-west1-a 2> /dev/null | tail -n 20 | egrep -i 'activation successful'
     if [ $? -eq 0 ]
     then
         # Computer setup is complete.  Shut it down so we can image it.
@@ -47,16 +47,18 @@ do
         while true
         do
             gcloud compute --project=natcap-servers \
-                instances describe $tempmachinename | grep status | grep TERMINATED
+                instances describe $tempmachinename --zone=$zone | grep status | grep TERMINATED
             if [ $? -eq 0 ]
             then
+                echo "Imaging $tempmachinename as $templatename"
                 gcloud compute images create $templatename \
                     --source-disk=$tempmachinename \
                     --source-disk-zone=$zone \
                     --family=windows-2008-r2
 
-                # now, delete the temporary VM
-                gcloud compute instances delete $tempmachinename --zone=$zone
+                # now, delete the temporary VM without prompting for confirmation
+                echo "Deleting VM $tempmachinename"
+                gcloud compute instances delete --quiet $tempmachinename --zone=$zone
                 break
             else
                 sleep 2
