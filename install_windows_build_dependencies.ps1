@@ -32,3 +32,21 @@ function InstallInnoSetup
     FetchFromBucket $filename
     cmd.exe /C "start /wait $filename /SILENT"
 }
+
+# Install known dependencies
+InstallMSI 7z1801-x64.msi
+InstallMSI Setup-Subversion-1.8.17.msi
+InstallInnoSetup make-3.81.exe
+InstallInnoSetup Mercurial-4.5-x64.exe
+InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
+InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
+InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
+InstallNSIS nsis-2.51-setup.exe
+
+# Update PATH environment variable
+$env:Path += ";C:\"
+[Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
+
+# Install chocolatey
+Set-ExecutionPolicy Bypass -Scope Process -Force
+iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
