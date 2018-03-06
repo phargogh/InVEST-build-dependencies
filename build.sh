@@ -2,7 +2,7 @@
 
 
 
-rev=`hg log -r. --template="r{rev}-c{date(date, '%Y%m%d')}-{node|short}"`
+rev=`hg log -r. --template="r{rev}-{node|short}-v{date(date, '%Y%m%d')}"`
 templatename="jenkins-win2008r2-$rev"
 tempmachinename=$templatename-setupinprogress
 zone=us-west1-a
