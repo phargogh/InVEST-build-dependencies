@@ -32,7 +32,7 @@ gcloud compute instances create $tempmachinename \
 
 echo "Building machine.  This may take some time."
 echo "In another shell, execute this command to see the console output: "
-echo "    $ gcloud compute --project=natcap-servers get-serial-port-output $tempmachinename --zone=$zone"
+echo "    $ gcloud compute instances --project=natcap-servers get-serial-port-output $tempmachinename --zone=$zone"
 while true
 do
     gcloud compute --project=natcap-servers \
