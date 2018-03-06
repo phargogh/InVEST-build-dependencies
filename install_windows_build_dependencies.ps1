@@ -50,7 +50,7 @@ function InstallNSISPluginFromZipfile
 {
     param([string]$archivename, $pluginpath)
     FetchFromBucket $archivename
-    "C:\Program Files\7-Zip\7z.exe" e $archivename -oC:\NSIS\Plugins $pluginpath
+    cmd.exe /C "C:\Program^ Files\7-Zip\7z.exe e $archivename -oC:\NSIS\Plugins $pluginpath"
 }
 
 # work out of C:\natcap-setup
