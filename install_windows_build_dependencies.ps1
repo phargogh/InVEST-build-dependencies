@@ -36,21 +36,41 @@ function InstallInnoSetup
     cmd.exe /C "start /wait $filename /SILENT /NOCANCEL /NORESTART /SUPPRESSMSGBOXES /VERYSILENT"
 }
 
+function InstallNSISPluginFromZipfile
+{
+    param([string]$archivename, $pluginpath)
+    FetchFromBucket $archivename
+    7z e $archivename -oC:\NSIS\Plugins $pluginpath
+}
+
+
 # Install known dependencies
 InstallMSI 7z1801-x64.msi
 InstallMSI Setup-Subversion-1.8.17.msi
 InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
 InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
-InstallNSIS nsis-2.51-setup.exe
+InstallNSIS nsis-2.51-setup.exe C:\NSIS
 InstallInnoSetup make-3.81.exe
 InstallInnoSetup Mercurial-4.5-x64.exe
 InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
-# TODO: install NSIS plugins from zipfiles
+
+# install NSIS plugins from zipfiles
+echo "Installing NSIS plugins"
+InstallNSISPluginFromZipfile Nsisunz.zip nsisunz\Release\nsisunz.dll
+InstallNSISPluginFromZipfile Inetc.zip Plugins\x86-ansi\INetC.dll
+InstallNSISPluginFromZipfile NsProcess.zip Plugin\nsProcess.dll
 
 # Update PATH environment variable
-$env:Path += ";C:\"
+echo "Updating PATH"
+$env:Path += ";C:\NSIS;C:\NSIS\bin"
+$env:Path += ";C:\Program Files\7-Zip;"
+$env:Path += ";C:\Program Files (x86)\Subversion\bin"
+$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
+$env:Path += ";C:\Program Files\Mercurial"
+$env:Path += ";C:\Program Files (x86)\Git\bin"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
 # Install chocolatey
+echo "Installing latest Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
