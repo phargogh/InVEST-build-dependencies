@@ -33,18 +33,18 @@ function InstallInnoSetup
     param([string]$filename)
     FetchFromBucket $filename
     echo "Installing InnoSetup $filename"
-    cmd.exe /C "start /wait $filename /SILENT"
+    cmd.exe /C "start /wait $filename /SILENT /NOCANCEL /NORESTART /SUPPRESSMSGBOXES /VERYSILENT"
 }
 
 # Install known dependencies
 InstallMSI 7z1801-x64.msi
 InstallMSI Setup-Subversion-1.8.17.msi
-InstallInnoSetup make-3.81.exe
-InstallInnoSetup Mercurial-4.5-x64.exe
-InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
 InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
 InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
 InstallNSIS nsis-2.51-setup.exe
+InstallInnoSetup make-3.81.exe
+InstallInnoSetup Mercurial-4.5-x64.exe
+InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
 # TODO: install NSIS plugins from zipfiles
 
 # Update PATH environment variable
