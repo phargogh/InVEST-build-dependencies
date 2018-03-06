@@ -42,6 +42,7 @@ InstallInnoSetup PortableGit-2.16.2-64-bit.7z.exe
 InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
 InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
 InstallNSIS nsis-2.51-setup.exe
+# TODO: install NSIS plugins from zipfiles
 
 # Update PATH environment variable
 $env:Path += ";C:\"
