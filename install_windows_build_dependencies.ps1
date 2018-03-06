@@ -21,14 +21,14 @@ function InstallMSI
 
 function InstallNSIS
 {
-    param([string]$filename [string]$installdir)
+    param([string]$filename, [string]$installdir)
     FetchFromBucket $filename
     cmd.exe /C "start /wait $filename /S /D=$installdir"
 }
 
 function InstallInnoSetup
 {
-    param([string]$filename [string]$installdir)
+    param([string]$filename)
     FetchFromBucket $filename
     cmd.exe /C "start /wait $filename /SILENT"
 }
