@@ -16,6 +16,7 @@ function InstallMSI
 {
     param([string]$filename)
     FetchFromBucket $filename
+    echo "Installing MSI $filename"
     cmd.exe /C "start /wait msiexec.exe /i $filename /quiet"
 }
 
@@ -23,6 +24,7 @@ function InstallNSIS
 {
     param([string]$filename, [string]$installdir)
     FetchFromBucket $filename
+    echo "Installing NSIS $filename"
     cmd.exe /C "start /wait $filename /S /D=$installdir"
 }
 
@@ -30,6 +32,7 @@ function InstallInnoSetup
 {
     param([string]$filename)
     FetchFromBucket $filename
+    echo "Installing InnoSetup $filename"
     cmd.exe /C "start /wait $filename /SILENT"
 }
 
