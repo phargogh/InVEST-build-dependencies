@@ -37,7 +37,7 @@ while true
 do
     gcloud compute --project=natcap-servers \
         instances get-serial-port-output \
-        $tempmachinename --zone=us-west1-a | tail -n 20 | grep "Activation successful"
+        $tempmachinename --zone=us-west1-a | tail -n 20 | egrep -i 'activation successful'
     if [ $? -eq 0 ]
     then
         # Computer setup is complete.  Shut it down so we can image it.
