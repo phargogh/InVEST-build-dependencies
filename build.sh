@@ -40,8 +40,10 @@ do
         $tempmachinename --zone=us-west1-a | tail -n 20 | grep "Activation successful"
     if [ $? -eq 0 ]
     then
-        # computer setup is complete, wait until the machine is completely shut down
-        # before creating the new machine image.
+        # Computer setup is complete.  Shut it down so we can image it.
+        gcloud compute --project=natcap-servers instances stop $tempmachinename --zone=$zone
+
+        # Wait until the VM is completely shut down before imaging.
         while true
         do
             gcloud compute --project=natcap-servers \
