@@ -8,14 +8,6 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
     Break
 }
 
-# define a custom unzip function for when we need it later.
-Add-Type -AssemblyName System.IO.Compression.FileSystem
-function Unzip
-{
-    param([string]$zipfile, [string]$outpath)
-    [System.IO.Compression.ZipFile]::ExtractToDirectory($zipfile, $outpath)
-}
-
 function FetchFromBucket
 {
     param([string]$filename)
@@ -24,10 +16,10 @@ function FetchFromBucket
 
 function InstallMSI
 {
-    param([string]$filename)
+    param([string]$filename, [string]$installdir)
     FetchFromBucket $filename
     echo "Installing MSI $filename"
-    cmd.exe /C "start /wait msiexec.exe /i $filename /quiet"
+    cmd.exe /C "start /wait msiexec.exe /i $filename TARGETDIR=$installdir /quiet"
 }
 
 function InstallNSIS
@@ -40,17 +32,17 @@ function InstallNSIS
 
 function InstallInnoSetup
 {
-    param([string]$filename)
+    param([string]$filename, [string]$installdir)
     FetchFromBucket $filename
     echo "Installing InnoSetup $filename"
-    cmd.exe /C "start /wait $filename /SILENT /NOCANCEL /NORESTART /SUPPRESSMSGBOXES /VERYSILENT"
+    cmd.exe /C "start /wait $filename /DIR=$installdir /SILENT /NOCANCEL /NORESTART /SUPPRESSMSGBOXES /VERYSILENT"
 }
 
 function InstallNSISPluginFromZipfile
 {
-    param([string]$archivename, $pluginpath)
+    param([string]$archivename, [string]$pluginpath)
     FetchFromBucket $archivename
-    cmd.exe /C "C:\Program^ Files\7-Zip\7z.exe e $archivename -oC:\NSIS\Plugins $pluginpath"
+    C:\7zip\7z.exe e $archivename -oC:\NSIS\Plugins $pluginpath
 }
 
 # work out of C:\natcap-setup
@@ -61,14 +53,14 @@ Set-Location -Path C:\natcap-setup
 
 # Install known dependencies
 echo "Installing dependencies from installers"
-InstallMSI 7z1801-x64.msi
-InstallMSI Setup-Subversion-1.8.17.msi
+InstallMSI 7z1801-x64.msi C:\7zip
+InstallMSI Setup-Subversion-1.8.17.msi C:\subversion
 InstallNSIS Miniconda2-4.4.10-Windows-x86.exe C:\Miniconda2_x32
 InstallNSIS Miniconda2-4.4.10-Windows-x86_64.exe C:\Miniconda2_x64
 InstallNSIS nsis-2.51-setup.exe C:\NSIS
-InstallInnoSetup make-3.81.exe
-InstallInnoSetup Mercurial-4.5-x64.exe
-InstallInnoSetup Git-2.16.2-64-bit.exe
+InstallInnoSetup make-3.81.exe C:\make
+InstallInnoSetup Mercurial-4.5-x64.exe C:\mercurial
+InstallInnoSetup Git-2.16.2-64-bit.exe C:\git
 
 # Install python2.7 to both conda installations
 echo "Installing python to conda environments"
@@ -84,11 +76,11 @@ InstallNSISPluginFromZipfile NsProcess.zip Plugin\nsProcess.dll
 # Update PATH environment variable
 echo "Updating PATH"
 $env:Path += ";C:\NSIS;C:\NSIS\bin"
-$env:Path += ";C:\Program Files\7-Zip;"
-$env:Path += ";C:\Program Files (x86)\Subversion\bin"
-$env:Path += ";C:\Program Files (x86)\GnuWin32\bin"
-$env:Path += ";C:\Program Files\Mercurial"
-$env:Path += ";C:\Program Files (x86)\Git\bin"
+$env:Path += ";C:\7zip"
+$env:Path += ";C:\subversion\bin"
+$env:Path += ";C:\make\bin"
+$env:Path += ";C:\mercurial"
+$env:Path += ";C:\git\bin"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
 # Install chocolatey
