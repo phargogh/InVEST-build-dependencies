@@ -1,3 +1,13 @@
+# Start the current script in a new shell, authenticated as admin.
+# From https://stackoverflow.com/a/11440595/299084
+If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator"))
+{
+    $arguments = "& '" + $myinvocation.mycommand.definition + "'"
+    Start-Process powershell -Verb runAs -ArgumentList $arguments
+    Break
+}
+
+
 # define a custom unzip function for when we need it later.
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 function Unzip
@@ -42,6 +52,10 @@ function InstallNSISPluginFromZipfile
     FetchFromBucket $archivename
     7z e $archivename -oC:\NSIS\Plugins $pluginpath
 }
+
+# work out of C:\natcap-setup
+New-Item -ItemType directory -Path C:\natcap-setup
+Set-Location -Path C:\natcap-setup
 
 
 # Install known dependencies
