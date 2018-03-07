@@ -33,7 +33,7 @@ do
     gcloud compute --project=natcap-servers instances get-serial-port-output \
         $tempmachinename --start=$startbyte --zone=us-west1-a 1> $latestlogging 2> $progressfile
     # only print logging if there's more to print.
-    if [[ $(wc -l <$latestlogging | grep -o -e '^[0-9]\+') -ge 1 ]]
+    if [[ $(wc -c <$latestlogging | grep -o -e '^[0-9]\+') -ge 1 ]]
     then
         cat $latestlogging
     fi
