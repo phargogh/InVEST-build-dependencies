@@ -62,6 +62,10 @@ InstallInnoSetup make-3.81.exe C:\make
 InstallInnoSetup Mercurial-4.5-x64.exe C:\mercurial
 InstallInnoSetup Git-2.16.2-64-bit.exe C:\git
 
+echo "Installing VC for Python27"
+FetchFromBucket VCForPython27.msi
+cmd.exe /C "start /wait msiexec.exe /i VCForPython27.msi /quiet"
+
 # Install python2.7 to both conda installations
 echo "Installing python to conda environments"
 C:\Miniconda2_x32\Scripts\conda install -y python=2.7

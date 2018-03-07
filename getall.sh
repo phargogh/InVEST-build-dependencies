@@ -32,6 +32,7 @@ wget http://nsis.sourceforge.net/mediawiki/images/c/c9/Inetc.zip
 wget http://nsis.sourceforge.net/mediawiki/images/1/18/NsProcess.zip
 wget https://astuteinternet.dl.sourceforge.net/project/nsis/NSIS%202/2.51/nsis-2.51-setup.exe
 wget https://astuteinternet.dl.sourceforge.net/project/gnuwin32/make/3.81/make-3.81.exe
+wget https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
 
 
 
