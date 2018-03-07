@@ -13,11 +13,10 @@
 
 TOOLSDIR=tools
 
-if [ -d $TOOLSDIR ]
+if [ ! -d $TOOLSDIR ]
 then
-    rm -r $TOOLSDIR
+    mkdir $TOOLSDIR
 fi
-mkdir $TOOLSDIR
 
 # only download files if they don't already exist
 alias wget="wget --no-clobber -P $TOOLSDIR"
