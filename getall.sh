@@ -19,7 +19,8 @@ then
 fi
 mkdir $TOOLSDIR
 
-alias wget="wget -P $TOOLSDIR"
+# only download files if they don't already exist
+alias wget="wget --no-clobber -P $TOOLSDIR"
 
 wget http://www.7-zip.org/a/7z1801-x64.msi
 wget https://svwh.dl.sourceforge.net/project/win32svn/1.8.17/Setup-Subversion-1.8.17.msi
