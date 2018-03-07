@@ -76,7 +76,7 @@ gcloud compute instance-templates create $templatename \
     --machine-type=n1-standard-2 \
     --metadata-from-file sysprep-specialize-script-ps1=install_windows_build_dependencies.ps1 \
     --region=$zone \
-    --image-project=windows-cloud \
+    --image-project=natcap-servers \
     --image=$templatename \
     --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
 echo "Done."
