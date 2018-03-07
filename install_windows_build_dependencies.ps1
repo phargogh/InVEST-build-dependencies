@@ -19,7 +19,7 @@ function InstallMSI
     param([string]$filename, [string]$installdir)
     FetchFromBucket $filename
     echo "Installing MSI $filename"
-    cmd.exe /C "start /wait msiexec.exe /i $filename TARGETDIR=$installdir /quiet"
+    cmd.exe /C "start /wait msiexec.exe /i $filename INSTALLDIR=$installdir /quiet"
 }
 
 function InstallNSIS
@@ -42,7 +42,7 @@ function InstallNSISPluginFromZipfile
 {
     param([string]$archivename, [string]$pluginpath)
     FetchFromBucket $archivename
-    cmd.exe /C "C:\7zip\7z.exe e $archivename -oC:\NSIS\Plugins $pluginpath"
+    cmd.exe /C "C:\7zip\7z.exe" e $archivename -oC:\NSIS\Plugins $pluginpath
 }
 
 # work out of C:\natcap-setup
