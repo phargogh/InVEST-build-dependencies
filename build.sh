@@ -25,16 +25,21 @@ echo "Building machine.  This may take some time."
 echo "In another shell, execute this command to see the console output: "
 echo "    $ gcloud compute instances --project=natcap-servers get-serial-port-output $tempmachinename --zone=$zone"
 progressfile=.consoleprogress
+latestlogging=.latestlogging
 echo 0 > $progressfile
 while true
 do
     startbyte=$(egrep -o '[0-9]+' $progressfile)
-    consolelogging=$(gcloud compute --project=natcap-servers instances get-serial-port-output \
-        $tempmachinename --start=$startbyte --zone=us-west1-a 2> $progressfile)
-    # print to console
-    echo $consolelogging
+    cloud compute --project=natcap-servers instances get-serial-port-output \
+        $tempmachinename --start=$startbyte --zone=us-west1-a 1> $latestlogging 2> $progressfile
+    # only print logging if there's more to print.
+    if [[ $(wc -l <$latestlogging) -ge 1 ]]
+    then
+        cat $latestlogging
+    fi
+
     # check if setup completed.
-    echo $consolelogging | egrep -i 'activation successful'
+    cat $latestlogging | egrep -i 'activation successful'
     if [ $? -eq 0 ]
     then
         # Computer setup is complete.  Shut it down so we can image it.
