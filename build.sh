@@ -7,18 +7,8 @@ templatename="jenkins-win2008r2-$rev"
 tempmachinename=$templatename-setupinprogress
 zone=us-west1-a
 
-#gcloud compute instance-templates create $templatename \
-#    --boot-disk-auto-delete \
-#    --boot-disk-size=50GB \
-#    --boot-disk-type=pd-standard \
-#    --machine-type=n1-standard-2 \
-#    --metadata-from-file sysprep-specialize-script-ps1=install_windows_build_dependencies.ps1 \
-#    --region=$zone \
-#    --image-project=windows-cloud \
-#    --image=windows-server-2008-r2-dc-v20180213 \
-#    --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
-
 # create an instance with the target setup script
+echo "Setting up instance " $tempmachinename
 gcloud compute instances create $tempmachinename \
     --boot-disk-auto-delete \
     --boot-disk-size=50GB \
@@ -29,6 +19,7 @@ gcloud compute instances create $tempmachinename \
     --image-project=windows-cloud \
     --image=windows-server-2008-r2-dc-v20180213 \
     --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
+
 
 echo "Building machine.  This may take some time."
 echo "In another shell, execute this command to see the console output: "
@@ -71,4 +62,15 @@ do
     fi
 done
 
-
+echo "Creating template from image " $templatename
+gcloud compute instance-templates create $templatename \
+    --boot-disk-auto-delete \
+    --boot-disk-size=50GB \
+    --boot-disk-type=pd-standard \
+    --machine-type=n1-standard-2 \
+    --metadata-from-file sysprep-specialize-script-ps1=install_windows_build_dependencies.ps1 \
+    --region=$zone \
+    --image-project=windows-cloud \
+    --image=$templatename \
+    --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
+echo "Done."
