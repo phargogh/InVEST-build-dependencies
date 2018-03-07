@@ -24,11 +24,17 @@ gcloud compute instances create $tempmachinename \
 echo "Building machine.  This may take some time."
 echo "In another shell, execute this command to see the console output: "
 echo "    $ gcloud compute instances --project=natcap-servers get-serial-port-output $tempmachinename --zone=$zone"
+progressfile=.consoleprogress
+echo 0 > .consoleprogress
 while true
 do
-    gcloud compute --project=natcap-servers \
-        instances get-serial-port-output \
-        $tempmachinename --zone=us-west1-a 2> /dev/null | tail -n 20 | egrep -i 'activation successful'
+    startbyte=$(egrep -o '[0-9]+' .progress)
+    consolelogging=$(gcloud compute --project=natcap-servers instances get-serial-port-output \
+        $tempmachinename --start=$startbyte --zone=us-west1-a 2> .consoleprogress)
+    # print to console
+    echo $consolelogging
+    # check if setup completed.
+    echo $consolelogging | egrep -i 'activation successful'
     if [ $? -eq 0 ]
     then
         # Computer setup is complete.  Shut it down so we can image it.
