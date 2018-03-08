@@ -42,36 +42,43 @@ do
     cat $latestlogging | egrep -i 'activation successful'
     if [ $? -eq 0 ]
     then
-        # Computer setup is complete.  Shut it down so we can image it.
-        gcloud compute --project=natcap-servers instances stop $tempmachinename --zone=$zone
-
-        # Wait until the VM is completely shut down before imaging.
-        while true
-        do
-            gcloud compute --project=natcap-servers \
-                instances describe $tempmachinename --zone=$zone | grep status | grep TERMINATED
-            if [ $? -eq 0 ]
-            then
-                echo "Imaging $tempmachinename as $templatename"
-                gcloud compute images create $templatename \
-                    --source-disk=$tempmachinename \
-                    --source-disk-zone=$zone \
-                    --family=windows-2008-r2
-
-                # now, delete the temporary VM without prompting for confirmation
-                echo "Deleting VM $tempmachinename"
-                gcloud compute instances delete --quiet $tempmachinename --zone=$zone
-                break
-            else
-                sleep 2
-            fi
-        done
         break
     else
         # computer setup is still in progress 
         sleep 2
     fi
 done
+
+echo "Shutting down VM so we can image it."
+# Computer setup is complete.  Shut it down so we can image it.
+# Wait until the VM is completely shut down before imaging.
+gcloud compute --project=natcap-servers instances stop $tempmachinename --zone=$zone
+while true
+do
+    gcloud compute --project=natcap-servers \
+        instances describe $tempmachinename --zone=$zone | grep status | grep TERMINATED
+    if [ $? -eq 0 ]
+    then
+        break
+    else
+        sleep 2
+    fi
+done
+
+
+echo "Imaging $tempmachinename as $templatename"
+gcloud compute images create $templatename \
+    --source-disk=$tempmachinename \
+    --source-disk-zone=$zone \
+    --family=windows-2008-r2
+
+# now, delete the temporary VM without prompting for confirmation
+echo "Deleting VM $tempmachinename"
+gcloud compute instances delete --quiet $tempmachinename --zone=$zone
+
+
+
+# TODO: update an existing template for jenkins windows slaves.
 
 echo "Creating template from image " $templatename
 gcloud compute instance-templates create $templatename \
