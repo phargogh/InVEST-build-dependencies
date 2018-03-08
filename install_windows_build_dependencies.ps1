@@ -48,7 +48,7 @@ function InstallNSISPluginFromZipfile
 function InstallAnticipatedCondaPackages
 {
     param([string]$condainstall)
-    cmd.exe /C "$condainstall\Scripts\conda" install -y python=2.7 "gdal>=2.0,<3.0" matplotlib rtree shapely "qtpy<1.3"
+    cmd.exe /C "$condainstall\Scripts\conda" install -y python=2.7 "gdal>=2.0" matplotlib rtree shapely "qtpy<1.3"
     cmd.exe /C "$condainstall\Scripts\conda" update -n base conda
 }
 

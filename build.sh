@@ -79,6 +79,7 @@ gcloud compute instances delete --quiet $tempmachinename --zone=$zone
 
 
 # TODO: update an existing template for jenkins windows slaves.
+# TODO: Add tags for jenkins cluster
 
 echo "Creating template from image " $templatename
 gcloud compute instance-templates create $templatename \
