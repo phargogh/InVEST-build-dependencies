@@ -45,6 +45,13 @@ function InstallNSISPluginFromZipfile
     cmd.exe /C "C:\7zip\7z.exe" e $archivename -oC:\NSIS\Plugins $pluginpath
 }
 
+function InstallAnticipatedCondaPackages
+{
+    param([string]$condainstall)
+    $condainstall\Scripts\conda update -n base conda
+    $condainstall\Scripts\conda install -y python=2.7 "gdal>=2.0,<3.0" matplotlib rtree shapely "qtpy<1.3"
+}
+
 # work out of C:\natcap-setup
 echo "Setting up working directory C:\natcap-setup"
 New-Item -ItemType directory -Path C:\natcap-setup
@@ -67,9 +74,9 @@ FetchFromBucket VCForPython27.msi
 cmd.exe /C "start /wait msiexec.exe /i VCForPython27.msi /quiet"
 
 # Install python2.7 to both conda installations
-echo "Installing python to conda environments"
-C:\Miniconda2_x32\Scripts\conda install -y python=2.7
-C:\Miniconda2_x64\Scripts\conda install -y python=2.7
+echo "Installing packages to conda environments"
+InstallAnticipatedCondaPackages C:\Miniconda2_x32
+InstallAnticipatedCondaPackages C:\Miniconda2_x64
 
 # install NSIS plugins from zipfiles
 echo "Installing NSIS plugins"
