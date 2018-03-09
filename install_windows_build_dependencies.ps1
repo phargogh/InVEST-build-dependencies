@@ -98,4 +98,4 @@ $env:Path += ";C:\git\bin"
 echo "Installing latest Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install openssh
+choco install -y openssh
