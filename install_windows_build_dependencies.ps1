@@ -11,7 +11,7 @@ If (-NOT ([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdenti
 function FetchFromBucket
 {
     param([string]$filename)
-    gsutil copy gs://natcap-build-dependencies/windows/$filename $filename
+    gsutil copy gs://natcap-build-cluster-dependencies/windows/$filename $filename
 }
 
 function InstallMSI
