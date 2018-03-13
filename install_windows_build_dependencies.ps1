@@ -86,8 +86,8 @@ InstallNSISPluginFromZipfile NsProcess.zip Plugin\nsProcess.dll
 
 echo "Installing OpenSSH"
 FetchFromBucket openssh-7.6.0.1.zip
-cmd.exe /C "C:\7zip\7z.exe" e openssh-7.6.0.1.zip -o .\openssh
-powershell.exe -c ".\openssh\tools\barebonesinstaller.ps1 -SSHServerFeature"
+cmd.exe /C "C:\7zip\7z.exe" e openssh-7.6.0.1.zip -oopenssh
+powershell.exe -c "C:\natcap-setup\openssh\tools\barebonesinstaller.ps1 -SSHServerFeature"
 
 
 # Update PATH environment variable
