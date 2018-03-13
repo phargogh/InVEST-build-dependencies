@@ -84,10 +84,13 @@ InstallNSISPluginFromZipfile Nsisunz.zip nsisunz\Release\nsisunz.dll
 InstallNSISPluginFromZipfile Inetc.zip Plugins\x86-ansi\INetC.dll
 InstallNSISPluginFromZipfile NsProcess.zip Plugin\nsProcess.dll
 
+echo "Setting execution policy for OpenSSH and Chocolatey installation"
+Set-ExecutionPolicy Bypass -Scope Process -Force
+
 echo "Installing OpenSSH"
 FetchFromBucket openssh-7.6.0.1.zip
 cmd.exe /C "C:\7zip\7z.exe" e openssh-7.6.0.1.zip -oopenssh
-powershell.exe -c "C:\natcap-setup\openssh\tools\barebonesinstaller.ps1 -SSHServerFeature"
+powershell.exe -c "C:\natcap-setup\openssh\barebonesinstaller.ps1 -SSHServerFeature"
 
 
 # Update PATH environment variable
@@ -98,10 +101,10 @@ $env:Path += ";C:\subversion\bin"
 $env:Path += ";C:\make\bin"
 $env:Path += ";C:\mercurial"
 $env:Path += ";C:\git\bin"
+$env:Path += ";C:\Program Files\OpenSSH-Win64"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
 # Install chocolatey
 echo "Installing latest Chocolatey"
-Set-ExecutionPolicy Bypass -Scope Process -Force
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
 refreshenv
