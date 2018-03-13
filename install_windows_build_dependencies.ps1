@@ -84,6 +84,12 @@ InstallNSISPluginFromZipfile Nsisunz.zip nsisunz\Release\nsisunz.dll
 InstallNSISPluginFromZipfile Inetc.zip Plugins\x86-ansi\INetC.dll
 InstallNSISPluginFromZipfile NsProcess.zip Plugin\nsProcess.dll
 
+echo "Installing OpenSSH"
+FetchFromBucket openssh-7.6.0.1.zip
+cmd.exe /C "C:\7zip\7z.exe" e openssh-7.6.0.1.zip -o .\openssh
+powershell.exe -c ".\openssh\tools\barebonesinstaller.ps1 -SSHServerFeature"
+
+
 # Update PATH environment variable
 echo "Updating PATH"
 $env:Path += ";C:\NSIS;C:\NSIS\bin"
@@ -98,4 +104,4 @@ $env:Path += ";C:\git\bin"
 echo "Installing latest Chocolatey"
 Set-ExecutionPolicy Bypass -Scope Process -Force
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
-choco install --force -y openssh
+refreshenv
