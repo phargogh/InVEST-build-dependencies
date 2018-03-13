@@ -20,7 +20,8 @@ gcloud compute instances create $tempmachinename \
     --zone=$zone \
     --image-project=windows-cloud \
     --image=windows-server-2008-r2-dc-v20180213 \
-    --service-account=$serviceaccount
+    --service-account=$serviceaccount \
+    --project=$project
 
 
 echo "Building machine.  This may take some time."
@@ -72,7 +73,8 @@ echo "Imaging $tempmachinename as $templatename"
 gcloud compute images create $templatename \
     --source-disk=$tempmachinename \
     --source-disk-zone=$zone \
-    --family=windows-2008-r2
+    --family=windows-2008-r2 \
+    --project=$project
 
 # now, delete the temporary VM without prompting for confirmation
 echo "Deleting VM $tempmachinename"
@@ -93,5 +95,6 @@ gcloud compute instance-templates create $templatename \
     --region=$zone \
     --image-project=$project \
     --image=$templatename \
-    --service-account=$serviceaccount
+    --service-account=$serviceaccount \
+    --project=$project
 echo "Done."
