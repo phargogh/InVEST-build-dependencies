@@ -6,8 +6,8 @@ rev=`hg log -r. --template="r{rev}-{node|short}-v{date(date, '%Y%m%d')}"`
 templatename="jenkins-win2008r2-$rev"
 tempmachinename=$templatename-setupinprogress
 zone=us-west1-a
-project=natcap-servers
-serviceaccount=jenkins-build-cluster@$project.iam.gserviceaccount.com
+project=natcap-build-cluster
+serviceaccount=jenkins@$project.iam.gserviceaccount.com
 
 # create an instance with the target setup script
 echo "Setting up instance " $tempmachinename
