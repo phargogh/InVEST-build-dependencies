@@ -6,6 +6,8 @@ rev=`hg log -r. --template="r{rev}-{node|short}-v{date(date, '%Y%m%d')}"`
 templatename="jenkins-win2008r2-$rev"
 tempmachinename=$templatename-setupinprogress
 zone=us-west1-a
+project=natcap-servers
+serviceaccount=jenkins-build-cluster@$project.iam.gserviceaccount.com
 
 # create an instance with the target setup script
 echo "Setting up instance " $tempmachinename
@@ -18,19 +20,19 @@ gcloud compute instances create $tempmachinename \
     --zone=$zone \
     --image-project=windows-cloud \
     --image=windows-server-2008-r2-dc-v20180213 \
-    --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
+    --service-account=$serviceaccount
 
 
 echo "Building machine.  This may take some time."
 echo "In another shell, execute this command to see the console output: "
-echo "    $ gcloud compute instances --project=natcap-servers get-serial-port-output $tempmachinename --zone=$zone"
+echo "    $ gcloud compute instances --project=$project get-serial-port-output $tempmachinename --zone=$zone"
 progressfile=.consoleprogress
 latestlogging=.latestlogging
 echo 0 > $progressfile
 while true
 do
     startbyte=$(egrep -o '[0-9]+' $progressfile)
-    gcloud compute --project=natcap-servers instances get-serial-port-output \
+    gcloud compute --project=$project instances get-serial-port-output \
         $tempmachinename --start=$startbyte --zone=us-west1-a 1> $latestlogging 2> $progressfile
     # only print logging if there's more to print.
     if [[ $(tr -d '[:space:]' < $latestlogging | wc -c | grep -o -e '^[0-9]\+') -ge 1 ]]
@@ -52,10 +54,10 @@ done
 echo "Shutting down VM so we can image it."
 # Computer setup is complete.  Shut it down so we can image it.
 # Wait until the VM is completely shut down before imaging.
-gcloud compute --project=natcap-servers instances stop $tempmachinename --zone=$zone
+gcloud compute --project=$project instances stop $tempmachinename --zone=$zone
 while true
 do
-    gcloud compute --project=natcap-servers \
+    gcloud compute --project=$project \
         instances describe $tempmachinename --zone=$zone | grep status | grep TERMINATED
     if [ $? -eq 0 ]
     then
@@ -89,7 +91,7 @@ gcloud compute instance-templates create $templatename \
     --machine-type=n1-standard-2 \
     --metadata-from-file sysprep-specialize-script-ps1=install_windows_build_dependencies.ps1 \
     --region=$zone \
-    --image-project=natcap-servers \
+    --image-project=$project \
     --image=$templatename \
-    --service-account=jenkins-build-cluster@natcap-servers.iam.gserviceaccount.com
+    --service-account=$serviceaccount
 echo "Done."
