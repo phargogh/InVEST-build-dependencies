@@ -11,10 +11,11 @@ serviceaccount=jenkins@$project.iam.gserviceaccount.com
 dependencybucket=natcap-build-cluster-dependencies
 
 # upload project keys to storage bucket.
+auth_keys_file=project-authorized_keys
 gcloud compute project-info --project=$project \
     describe --format=json | jq -r '.commonInstanceMetadata.items[] | select(.key == "sshKeys") | .value' \
-    > project-authorized_keys
-gsutil rsync project-authorized_keys gs://$dependencybucket
+    > $auth_keys_file
+gsutil cp $auth_keys_file gs://$dependencybucket/$auth_keys_file
 
 
 # create an instance with the target setup script
