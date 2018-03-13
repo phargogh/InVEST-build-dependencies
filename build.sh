@@ -8,6 +8,14 @@ tempmachinename=$templatename-setupinprogress
 zone=us-west1-a
 project=natcap-build-cluster
 serviceaccount=jenkins@$project.iam.gserviceaccount.com
+dependencybucket=natcap-build-cluster-dependencies
+
+# upload project keys to storage bucket.
+gcloud compute project-info --project=$project \
+    describe --format=json | jq -r '.commonInstanceMetadata.items[] | select(.key == "sshKeys") | .value' \
+    > project-authorized_keys
+gsutil rsync project-authorized_keys gs://$dependencybucket
+
 
 # create an instance with the target setup script
 echo "Setting up instance " $tempmachinename

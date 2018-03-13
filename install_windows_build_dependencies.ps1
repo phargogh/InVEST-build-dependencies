@@ -104,6 +104,20 @@ $env:Path += ";C:\git\bin"
 $env:Path += ";C:\Program Files\OpenSSH-Win64"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
+# Set up jenkins user and SSH key from project metadata
+$Password = "Jenkins"+([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | sort {Get-Random})[0..8] -join ''
+cmd.exe /C "net user /add /homedir:C:\Users\jenkins jenkins $Password"
+New-Item C:\Users\jenkins\.ssh -ItemType Directory
+FetchFromBucket project-authorized_keys
+Move-Item -Path project-authorized_keys -Destination C:\Users\jenkins\.ssh\authorized_keys
+
+$authorizedKeyPath = "C:\Users\jenkins\.ssh\authorized_keys"
+$acl = Get-Acl $authorizedKeyPath
+$ar = New-Object System.Security.AccessControl.FileSystemAccessRule("NT Service\sshd", "Read", "Allow")
+$acl.SetAccessRule($ar)
+Set-Acl $authorizedKeyPath $acl
+
+
 # Install chocolatey
 echo "Installing latest Chocolatey"
 iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))
