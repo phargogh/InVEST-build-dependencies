@@ -87,7 +87,7 @@ gcloud compute images create $templatename \
 
 # now, delete the temporary VM without prompting for confirmation
 echo "Deleting VM $tempmachinename"
-gcloud compute instances delete --quiet $tempmachinename --zone=$zone
+gcloud compute instances delete --quiet $tempmachinename --zone=$zone --project=$project
 
 
 
