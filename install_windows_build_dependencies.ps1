@@ -108,7 +108,7 @@ $env:Path += ";C:\Program Files\OpenSSH-Win64"
 $Password = "Jenkins"+([char[]]([char]33..[char]95) + ([char[]]([char]97..[char]126)) + 0..9 | sort {Get-Random})[0..8] -join ''
 cmd.exe /C "net user /add /homedir:C:\Users\jenkins jenkins $Password"
 New-Item C:\Users\jenkins\.ssh -ItemType Directory
-FetchFromBucket project-authorized_keys
+gsutil copy gs://natcap-build-cluster-dependencies/project-authorized_keys project-authorized_keys
 Move-Item -Path project-authorized_keys -Destination C:\Users\jenkins\.ssh\authorized_keys
 
 $authorizedKeyPath = "C:\Users\jenkins\.ssh\authorized_keys"
