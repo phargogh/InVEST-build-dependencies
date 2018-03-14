@@ -41,7 +41,7 @@ latestlogging=.latestlogging
 echo 0 > $progressfile
 while true
 do
-    startbyte=$(egrep -o '[0-9]+' $progressfile)
+    startbyte=$(grep -o -e '[0-9]\+' $progressfile)
     gcloud compute --project=$project instances get-serial-port-output \
         $tempmachinename --start=$startbyte --zone=us-west1-a 1> $latestlogging 2> $progressfile
     # only print logging if there's more to print.
