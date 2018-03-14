@@ -111,7 +111,7 @@ New-Item C:\Users\jenkins\.ssh -ItemType Directory
 gsutil copy gs://natcap-build-cluster-dependencies/project-authorized_keys project-authorized_keys
 Move-Item -Path project-authorized_keys -Destination C:\Users\jenkins\.ssh\authorized_keys
 
-$authorizedKeyPath = "C:\Users\jenkins\.ssh\authorized_keys"
+$authorizedKeyPath = "C:\ProgramData\authorized_keys"
 $acl = Get-Acl $authorizedKeyPath
 $ar = New-Object System.Security.AccessControl.FileSystemAccessRule("NT Service\sshd", "Read", "Allow")
 $acl.SetAccessRule($ar)

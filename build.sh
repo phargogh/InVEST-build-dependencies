@@ -10,11 +10,12 @@ project=natcap-build-cluster
 serviceaccount=jenkins@$project.iam.gserviceaccount.com
 dependencybucket=natcap-build-cluster-dependencies
 
-# upload project keys to storage bucket.
+# Fetch keys from project metadata, reformat as authorized keys and
+# upload authorized keys to storage bucket.
 auth_keys_file=project-authorized_keys
 gcloud compute project-info --project=$project \
     describe --format=json | jq -r '.commonInstanceMetadata.items[] | select(.key == "sshKeys") | .value' \
-    > $auth_keys_file
+    | sed 's|^[a-z]\+:||' | awk NF > $auth_keys_file
 gsutil cp $auth_keys_file gs://$dependencybucket/$auth_keys_file
 
 
