@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+# Check tool dependencies.
+which gcloud > /dev/null || echo "gcloud CLI is required but could not be found."
+which sshpass > /dev/null || echo "sshpass is required but could not be found."
+which jq > /dev/null || echo "jq is required but could not be found."
 
 
 rev=`hg log -r. --template="r{rev}-{node|short}-v{date(date, '%Y%m%d')}"`
@@ -67,6 +71,17 @@ do
         sleep 2
     fi
 done
+
+# Set up our SSH user and copy keys over.
+passwordfile=jenkins-windows-pw.temp
+gcloud beta compute reset-windows-password $tempmachinename \
+    --project=$project --zone=$zone --user=jenkins --quiet | grep password | awk '{ print $2 }' > $passwordfile
+externalIP=$(gcloud computer instances describe $tempmachinename --zone=$zone --project=$project --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
+sshpass -f $passwordfile ssh jenkins@$externalIP -c "mkdir .ssh; cd .ssh; gsutil cp gs://$dependencybucket/$auth_keys_file authorized_keys; gsutil cp gs://$dependencybucket/$jenkinsagentpublickey id_rsa.pub"
+
+# Reset the password once again so we can't know it and it won't show up in the logs.
+gcloud beta compute reset-windows-password $tempmachinename \
+    --project=$project --zone=$zone --user=jenkins --quiet > /dev/null
 
 echo "Shutting down VM so we can image it."
 # Computer setup is complete.  Shut it down so we can image it.
