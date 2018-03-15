@@ -12,11 +12,17 @@ dependencybucket=natcap-build-cluster-dependencies
 
 # Fetch keys from project metadata, reformat as authorized keys and
 # upload authorized keys to storage bucket.
+all_keys=allkeys.txt
 auth_keys_file=project-authorized_keys
+jenkinsagentpublickey=jenkins-agent-id_rsa.pub
 gcloud compute project-info --project=$project \
     describe --format=json | jq -r '.commonInstanceMetadata.items[] | select(.key == "sshKeys") | .value' \
-    | sed 's|^[a-z]\+:||' | awk NF > $auth_keys_file
+    > $all_keys
+cat $all_keys | sed 's|^[a-z]\+:||' | awk NF > $auth_keys_file
+grep jenkins $all_keys | sed 's|^[a-z]\+:||' > $jenkinsagentpublickey
+
 gsutil cp $auth_keys_file gs://$dependencybucket/$auth_keys_file
+gsutil cp $jenkinsagentpublickey gs://$dependencybucket/$jenkinsagentpublickey
 
 
 # create an instance with the target setup script

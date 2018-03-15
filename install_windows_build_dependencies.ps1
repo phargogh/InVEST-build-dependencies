@@ -104,16 +104,19 @@ $env:Path += ";C:\git\bin"
 $env:Path += ";C:\Program Files\OpenSSH-Win64"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
-# Set up jenkins user and SSH key from project metadata
-$authorizedKeyPath = "C:\ProgramData\authorized_keys"
+# Set up jenkins user public key and authorized keys in new jenkins user directory
+# and set permissions correctly.
+$authorizedKeyPath = "C:\ProgramData\ssh\authorized_keys"
 gsutil copy gs://natcap-build-cluster-dependencies/project-authorized_keys project-authorized_keys
 Move-Item -Path project-authorized_keys -Destination $authorizedKeyPath
 
-# Set appropriate ACL for authorized keys
-$acl = Get-Acl $authorizedKeyPath
-$ar = New-Object System.Security.AccessControl.FileSystemAccessRule("NT Service\sshd", "Read", "Allow")
-$acl.SetAccessRule($ar)
-Set-Acl $authorizedKeyPath $acl
+$jenkinsuserkey = "C:\Users\jenkins\.ssh\id_rsa.pub"
+gsutil copy gs://natcap-build-cluster-dependencies/jenkins-agent-id_rsa.pub id_rsa.pub
+New-Item C:\Users\jenkins\.ssh -ItemType Directory
+Move-Item -Path id_rsa.pub -Destination $jenkinsuserkey
+
+# Fix up permissions on the installed keys.  OpenSSH won't work without this.
+& 'C:\Program Files\OpenSSH-Win64\FixHostFilePermissions.ps1' -Confirm:$false
 
 
 # Install chocolatey
