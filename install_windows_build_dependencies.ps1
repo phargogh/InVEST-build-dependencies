@@ -117,6 +117,7 @@ Move-Item -Path id_rsa.pub -Destination $jenkinsuserkey
 
 # Fix up permissions on the installed keys.  OpenSSH won't work without this.
 & 'C:\Program Files\OpenSSH-Win64\FixHostFilePermissions.ps1' -Confirm:$false
+& 'C:\Program Files\OpenSSH-Win64\FixUserFilePermissions.ps1' -Confirm:$false
 
 
 # Install chocolatey
