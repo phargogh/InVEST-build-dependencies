@@ -104,11 +104,10 @@ $env:Path += ";C:\git\bin"
 $env:Path += ";C:\Program Files\OpenSSH-Win64"
 [Environment]::SetEnvironmentVariable("Path", $env:Path, [System.EnvironmentVariableTarget]::Machine)
 
-# Set up jenkins user public key and authorized keys in new jenkins user directory
-# and set permissions correctly.
-$authorizedKeyPath = "C:\ProgramData\ssh\authorized_keys"
+# Fetch authorized keys list and jenkins public key so we can install them later.
 gsutil copy gs://natcap-build-cluster-dependencies/project-authorized_keys project-authorized_keys
-Move-Item -Path project-authorized_keys -Destination $authorizedKeyPath
+gsutil copy gs://natcap-build-cluster-dependencies/jenkins-agent-id_rsa.pub id_rsa.pub
+Copy-Item -Path project-authorized_keys -Destination "C:\ProgramData\ssh\authorized_keys"
 
 # Fix up permissions on the installed keys.  OpenSSH won't work without this.
 & 'C:\Program Files\OpenSSH-Win64\FixHostFilePermissions.ps1' -Confirm:$false
