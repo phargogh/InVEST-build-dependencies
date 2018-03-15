@@ -76,8 +76,8 @@ done
 passwordfile=jenkins-windows-pw.temp
 gcloud beta compute reset-windows-password $tempmachinename \
     --project=$project --zone=$zone --user=jenkins --quiet | grep password | awk '{ print $2 }' > $passwordfile
-externalIP=$(gcloud computer instances describe $tempmachinename --zone=$zone --project=$project --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
-sshpass -f $passwordfile ssh jenkins@$externalIP -c "mkdir .ssh; cd .ssh; gsutil cp gs://$dependencybucket/$auth_keys_file authorized_keys; gsutil cp gs://$dependencybucket/$jenkinsagentpublickey id_rsa.pub"
+externalIP=$(gcloud compute instances describe $tempmachinename --zone=$zone --project=$project --format="value(networkInterfaces[0].accessConfigs[0].natIP)")
+sshpass -f $passwordfile ssh jenkins@$externalIP "mkdir .ssh; cd .ssh; gsutil cp gs://$dependencybucket/$auth_keys_file authorized_keys; gsutil cp gs://$dependencybucket/$jenkinsagentpublickey id_rsa.pub"
 
 # Reset the password once again so we can't know it and it won't show up in the logs.
 gcloud beta compute reset-windows-password $tempmachinename \
